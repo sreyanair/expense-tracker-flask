@@ -5,18 +5,30 @@ This project allows users to securely manage their daily expenses and visualize 
 
 ## Features
 -User registration and login authentication
+
 -Secure password hashing
+
 -Add, edit, and delete expenses
+
 -Monthly expense analytics
+
 -Category-wise expense breakdown
+
 -Interactive charts using Chart.js
+
 -Pagination for expense history
+
 -Clean UI with template inheritance
 
 ## Tech Stack
 -Backend: Flask (Python)
+
 -Database: MySQL
+
 -Frontend: HTML, CSS, Bootstrap
+
 -Charts: Chart.js
+
 -Authentication: Werkzeug security hashing
+
 -Version Control: Git & GitHub
