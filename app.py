@@ -1,21 +1,44 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+import os
 import mysql.connector
+from urllib.parse import urlparse
+from flask import Flask, render_template, request, redirect, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 
-app= Flask(__name__)
-app.secret_key="your_secret_key"
+app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "your_secret_key")
+
+def get_db():
+    # 1. Get the URL you pasted into Render's environment variables
+    db_url = os.environ.get("DATABASE_URL")
+    
+    if db_url:
+        # 2. Parse the Railway URL: mysql://user:password@host:port/database
+        url = urlparse(db_url)
+        return mysql.connector.connect(
+            host=url.hostname,
+            user=url.username,
+            password=url.password,
+            database=url.path[1:], # Removes the leading slash from the database name
+            port=url.port
+        )
+    else:
+        # 3. Fallback to your local settings if DATABASE_URL isn't found
+        return mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="flaskdb"
+       )
+
+if __name__ == "__main__":
+    # Ensure the app binds to Render's port
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+    
 
 @app.route('/')
 def home():
     return redirect(url_for('analytics'))
-
-def get_db():
-  return mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="root",
-    database="flaskdb"
-)
 
 @app.route('/signup', methods=['GET','POST'])
 def signup():
