@@ -30,6 +30,40 @@ def get_db():
             database="flaskdb"
        )
 
+def init_db():
+    db = get_db()
+    cursor = db.cursor()
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100),
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS expenses (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT,
+            amount DECIMAL(10, 2) NOT NULL,
+            category VARCHAR(50),
+            description TEXT,
+            date DATE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+    
+    db.commit()
+    cursor.close()
+    db.close()
+
+init_db()
+
 if __name__ == "__main__":
     # Ensure the app binds to Render's port
     port = int(os.environ.get("PORT", 5000))
